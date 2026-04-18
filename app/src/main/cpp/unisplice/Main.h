@@ -20,9 +20,11 @@ namespace UniSplice {
         static bool mLoadShadowHook();
 
     public:
+        static bool injected;
         static void* mono_handle;
         static bool Initialize();
         static void OnMonoLoaded();
+        static bool HookDlOpen();
     };
 
 } // UniSplice

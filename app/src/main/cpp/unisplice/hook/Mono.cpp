@@ -2,8 +2,11 @@
 
 namespace UniSplice::Hook {
     void* (*Mono::_orig_mono_runtime_invoke)(void*, void*, void**, void**) = nullptr;
+    void* (*Mono::_orig_mono_assembly_load)(void*, void*, void*) = nullptr;
+    void* (*Mono::_orig_mono_assembly_load_from_full)(void*, void*, void*, void*) = nullptr;
 
     void Mono::Initialize() {
+        // Hook mono_runtime_invoke
         void* stub = shadowhook_hook_sym_name(
                 "libmonobdwgc-2.0.so",
                 "mono_runtime_invoke",
@@ -14,8 +17,26 @@ namespace UniSplice::Hook {
         if (!stub) {
             LOGE("Failed to hook mono_runtime_invoke!");
         } else {
-            LOGI("mono_runtime_invoke hook installed!");
+            LOGI("mono_runtime_invoke hook installed! stub=%p", stub);
         }
+        
+        // Hook mono_assembly_load - called when assemblies are loaded
+        void* stub2 = shadowhook_hook_sym_name(
+                "libmonobdwgc-2.0.so",
+                "mono_assembly_load",
+                (void*) mHookMonoAssemblyLoad,
+                (void**)&_orig_mono_assembly_load
+        );
+        if (stub2) LOGI("mono_assembly_load hook also installed!");
+        
+        // Hook mono_assembly_load_from_full
+        void* stub3 = shadowhook_hook_sym_name(
+                "libmonobdwgc-2.0.so",
+                "mono_assembly_load_from_full",
+                (void*) mHookMonoAssemblyLoadFromFull,
+                (void**)&_orig_mono_assembly_load_from_full
+        );
+        if (stub3) LOGI("mono_assembly_load_from_full hook also installed!");
     }
 
 
@@ -43,8 +64,9 @@ namespace UniSplice::Hook {
     }
 
     void* Mono::mHookMonoRuntimeInvoke(void* method, void* obj, void** params, void** exc) {
+        LOGI("mono_runtime_invoke called! method=%p obj=%p", method, obj);
+        
         static bool ran = false;
-
         if (ran) return _orig_mono_runtime_invoke(method, obj, params, exc);
         ran = true;
 
@@ -121,5 +143,21 @@ namespace UniSplice::Hook {
         }
 
         return _orig_mono_runtime_invoke(method, obj, params, exc);
+    }
+
+    void* Mono::mHookMonoAssemblyLoad(void* aname, void* dependent_assm, void* status) {
+        LOGI("mono_assembly_load called! aname=%p", aname);
+        if (_orig_mono_assembly_load) {
+            return _orig_mono_assembly_load(aname, dependent_assm, status);
+        }
+        return nullptr;
+    }
+
+    void* Mono::mHookMonoAssemblyLoadFromFull(void* image, void* name, void* status, void* refonly) {
+        LOGI("mono_assembly_load_from_full called! image=%p name=%p", image, name);
+        if (_orig_mono_assembly_load_from_full) {
+            return _orig_mono_assembly_load_from_full(image, name, status, refonly);
+        }
+        return nullptr;
     }
 }

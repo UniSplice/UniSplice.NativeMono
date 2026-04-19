@@ -10,6 +10,12 @@ Java_de_unisplice_loader_ModdedActivity_initializeOnUnityCreate(JNIEnv *env, job
     UniSplice::Main::HookDlOpen();
 }
 
+JNIEXPORT void JNICALL
+Java_de_unisplice_manager_modded_ModdingActivity_initializeOnUnityCreate(JNIEnv *env, jobject thiz) {
+    LOGI("initializeOnUnityCreate called, installing dlopen hook...");
+    UniSplice::Main::HookDlOpen();
+}
+
 } // extern "C"
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {

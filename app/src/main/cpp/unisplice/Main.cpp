@@ -35,6 +35,7 @@ namespace UniSplice {
         if (!UniSplice::Hook::DlOpen::Initialize()) return false; // Failed Hook
         _initialized = true;
         LOGI("UniSplice Bootstrapper Finished Loading!");
+        return true;
     }
 
     bool Main::mLoadShadowHook() {

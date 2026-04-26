@@ -39,9 +39,14 @@ namespace UniSplice::Hook {
         if (filename) {
             LOGI("dlopen called: %s", filename);
 
+            bool old_mono = false;
+            // Check for libmono separately, in case this game is older
+            if(strstr(filename, "libmono")) old_mono = true;
+
             if (strstr(filename, "libmonobdwgc") || strstr(filename, "libmono")) {
                 LOGI("Mono library detected: %s", filename);
                 UniSplice::Main::mono_handle = handle;
+                UniSplice::Main::is_old_mono = old_mono;
                 UniSplice::Main::OnMonoLoaded();
             }
         }

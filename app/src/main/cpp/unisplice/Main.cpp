@@ -5,6 +5,7 @@ namespace UniSplice {
     void* Main::_shadowhook_handle = nullptr;
     void* Main::mono_handle = nullptr;
     bool Main::injected = false;
+    bool Main::is_old_mono = false;
 
     bool Main::Initialize() {
         if(_initialized) return true; // Already Initialized

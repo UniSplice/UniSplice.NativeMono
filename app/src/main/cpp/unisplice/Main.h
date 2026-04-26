@@ -22,6 +22,7 @@ namespace UniSplice {
     public:
         static bool injected;
         static void* mono_handle;
+        static bool is_old_mono;
         static bool Initialize();
         static void OnMonoLoaded();
         static bool HookDlOpen();

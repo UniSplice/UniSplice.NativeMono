@@ -1,11 +1,9 @@
 #include "DlOpen.h"
-#include "Misc.h"
 
 
 namespace UniSplice::Hook {
     void* (*DlOpen::_original)(const char* filename, int flags) = nullptr;
     bool DlOpen::_hookEnabled = false;
-    static bool _miscInitialized = false;
 
     bool DlOpen::Initialize() {
         void* stub = shadowhook_hook_sym_name(
@@ -35,26 +33,15 @@ namespace UniSplice::Hook {
             }
             return real_dlopen ? real_dlopen(filename, flags) : nullptr;
         }
-
+        
         void* handle = _original(filename, flags);
-
-        // Install misc hooks on first dlopen (not after mono!)
-        if (!_miscInitialized && UniSplice::Main::shadow_hooks) {
-            _miscInitialized = true;
-            Misc::Initialize();
-        }
 
         if (filename) {
             LOGI("dlopen called: %s", filename);
 
-            bool old_mono = true;
-            // Check for libmono separately, in case this game is older
-            if(strstr(filename, "libmonobdwgc")) old_mono = false;
-
             if (strstr(filename, "libmonobdwgc") || strstr(filename, "libmono")) {
                 LOGI("Mono library detected: %s", filename);
                 UniSplice::Main::mono_handle = handle;
-                UniSplice::Main::is_old_mono = old_mono;
                 UniSplice::Main::OnMonoLoaded();
             }
         }

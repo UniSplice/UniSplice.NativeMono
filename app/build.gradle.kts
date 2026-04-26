@@ -30,12 +30,6 @@ android {
         prefab = true
     }
 
-    packaging {
-        jniLibs {
-            pickFirsts += "**/libshadowhook.so"
-        }
-    }
-
 }
 
 dependencies {

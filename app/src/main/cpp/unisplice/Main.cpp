@@ -1,21 +1,13 @@
 #include "Main.h"
-#include <cstdlib>
 
 namespace UniSplice {
     bool Main::_initialized = false;
     void* Main::_shadowhook_handle = nullptr;
     void* Main::mono_handle = nullptr;
     bool Main::injected = false;
-    bool Main::is_old_mono = false;
-    bool Main::shadow_hooks = false;
 
     bool Main::Initialize() {
         if(_initialized) return true; // Already Initialized
-
-        shadow_hooks = (getenv("UNISPLICE_SHADOW_HOOKS") != nullptr);
-        if (shadow_hooks) {
-            LOGI("Shadow hooks enabled!");
-        }
 
         LOGI("Loading ShadowHook...");
         if(!mLoadShadowHook()){
@@ -42,7 +34,6 @@ namespace UniSplice {
         LOGI("Registering DlOpen hook...");
         if (!UniSplice::Hook::DlOpen::Initialize()) return false; // Failed Hook
         _initialized = true;
-
         LOGI("UniSplice Bootstrapper Finished Loading!");
         return true;
     }

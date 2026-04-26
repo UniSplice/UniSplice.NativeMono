@@ -43,9 +43,6 @@ namespace UniSplice {
         if (!UniSplice::Hook::DlOpen::Initialize()) return false; // Failed Hook
         _initialized = true;
 
-        // Initialize shadow hooks for file redirection
-        UniSplice::Hook::Misc::Initialize();
-
         LOGI("UniSplice Bootstrapper Finished Loading!");
         return true;
     }

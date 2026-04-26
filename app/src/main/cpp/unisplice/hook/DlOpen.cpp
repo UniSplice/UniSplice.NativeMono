@@ -1,9 +1,11 @@
 #include "DlOpen.h"
+#include "Misc.h"
 
 
 namespace UniSplice::Hook {
     void* (*DlOpen::_original)(const char* filename, int flags) = nullptr;
     bool DlOpen::_hookEnabled = false;
+    static bool _miscInitialized = false;
 
     bool DlOpen::Initialize() {
         void* stub = shadowhook_hook_sym_name(
@@ -35,6 +37,12 @@ namespace UniSplice::Hook {
         }
 
         void* handle = _original(filename, flags);
+
+        // Install misc hooks on first dlopen (not after mono!)
+        if (!_miscInitialized && UniSplice::Main::shadow_hooks) {
+            _miscInitialized = true;
+            Misc::Initialize();
+        }
 
         if (filename) {
             LOGI("dlopen called: %s", filename);

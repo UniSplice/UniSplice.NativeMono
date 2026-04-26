@@ -33,15 +33,15 @@ namespace UniSplice::Hook {
             }
             return real_dlopen ? real_dlopen(filename, flags) : nullptr;
         }
-        
+
         void* handle = _original(filename, flags);
 
         if (filename) {
             LOGI("dlopen called: %s", filename);
 
-            bool old_mono = false;
+            bool old_mono = true;
             // Check for libmono separately, in case this game is older
-            if(strstr(filename, "libmono")) old_mono = true;
+            if(strstr(filename, "libmonobdwgc")) old_mono = false;
 
             if (strstr(filename, "libmonobdwgc") || strstr(filename, "libmono")) {
                 LOGI("Mono library detected: %s", filename);

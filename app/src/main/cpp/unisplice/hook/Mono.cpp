@@ -5,8 +5,10 @@ namespace UniSplice::Hook {
 
     void Mono::Initialize() {
         // Hook mono_runtime_invoke
+        const char* lib = Main::is_old_mono ? "libmono.so" : "libmonobdwgc-2.0.so"; // Old Mono: libmono.so, New Mono: libmonobdwgc-2.0.so
+        LOGI("Using: %s", lib);
         void* stub = shadowhook_hook_sym_name(
-        Main::is_old_mono ? "libmono" : "libmonobdwgc-2.0.so", // Old Mono: libmono.so, New Mono: libmonobdwgc-2.0.so
+                lib,
                 "mono_runtime_invoke",
                 (void*) mHookMonoRuntimeInvoke,
                 (void**)&_orig_mono_runtime_invoke

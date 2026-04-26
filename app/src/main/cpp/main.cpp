@@ -3,13 +3,6 @@
 #include "unisplice/Main.h"
 
 extern "C" {
-
-JNIEXPORT void JNICALL
-Java_de_unisplice_loader_ModdedActivity_initializeOnUnityCreate(JNIEnv *env, jobject thiz) {
-    LOGI("initializeOnUnityCreate called, installing dlopen hook...");
-    UniSplice::Main::HookDlOpen();
-}
-
 JNIEXPORT void JNICALL
 Java_de_unisplice_manager_modded_ModdingActivity_initializeOnUnityCreate(JNIEnv *env, jobject thiz) {
     LOGI("initializeOnUnityCreate called, installing dlopen hook...");
@@ -23,6 +16,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     LOGI("Bootstrapper Version: %s", UNISPLICE_BOOTSTRAP_VERSION);
 
     UniSplice::Main::injected = getenv("UNISPLICE_INJECTED");
+    UniSplice::Main::shadow_hooks = getenv("UNISPLICE_SHADOW_HOOKS");
 
     if(UniSplice::Main::injected) {
         LOGI("UniSplice was Injected, not Patched!");

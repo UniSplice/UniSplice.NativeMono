@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(unisplicemono SHARED main.cpp unisplice.h
     unisplice/Main.cpp unisplice/Main.h
     unisplice/hook/DlOpen.cpp unisplice/hook/DlOpen.h
-    unisplice/hook/Mono.cpp unisplice/hook/Mono.h)
+    unisplice/hook/Mono.cpp unisplice/hook/Mono.h
+    unisplice/hook/Misc.cpp unisplice/hook/Misc.h)
 
 target_include_directories(unisplicemono PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

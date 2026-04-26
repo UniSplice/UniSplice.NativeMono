@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include "hook/DlOpen.h"
 #include "hook/Mono.h"
+#include "hook/Misc.h"
 
 namespace UniSplice {
 
@@ -23,6 +24,7 @@ namespace UniSplice {
         static bool injected;
         static void* mono_handle;
         static bool is_old_mono;
+        static bool shadow_hooks;
         static bool Initialize();
         static void OnMonoLoaded();
         static bool HookDlOpen();
